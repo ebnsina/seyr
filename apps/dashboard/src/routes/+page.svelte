@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { fly, fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
-	import { Button, Logo, ThemeToggle, Badge, AnimatedNumber } from '$lib/components/ui';
+	import { Button, Badge, AnimatedNumber } from '$lib/components/ui';
+	import Nav from '$lib/components/marketing/Nav.svelte';
+	import Footer from '$lib/components/marketing/Footer.svelte';
 
 	// Staggered entrance helper.
 	const rise = (delay: number) => ({ y: 16, duration: 700, delay, easing: cubicOut });
@@ -27,15 +29,7 @@
 	></div>
 
 	<div class="relative mx-auto flex max-w-6xl flex-col px-6">
-		<!-- nav -->
-		<header class="flex items-center justify-between py-6" in:fade={{ duration: 500 }}>
-			<Logo />
-			<nav class="flex items-center gap-2">
-				<ThemeToggle />
-				<Button href="/login" variant="ghost" size="sm">Log in</Button>
-				<Button href="/signup" size="sm">Get started</Button>
-			</nav>
-		</header>
+		<Nav />
 
 		<!-- hero -->
 		<section class="grid items-center gap-12 py-16 md:grid-cols-2 md:py-24">
@@ -113,6 +107,30 @@
 				</div>
 			{/each}
 		</section>
+
+		<!-- closing CTA -->
+		<section class="pb-24">
+			<div
+				class="relative overflow-hidden rounded-2xl border border-border bg-surface px-8 py-14 text-center"
+			>
+				<div
+					class="pointer-events-none absolute inset-x-0 -top-24 mx-auto size-72 rounded-full opacity-20 blur-[100px]"
+					style="background: radial-gradient(circle, var(--accent), transparent 60%)"
+				></div>
+				<h2 class="font-display text-3xl font-semibold tracking-tight">
+					Ready to ditch the clutter?
+				</h2>
+				<p class="mx-auto mt-2 max-w-md text-muted">
+					Set up in two minutes. Free up to 10k events a month — no credit card.
+				</p>
+				<div class="mt-6 flex justify-center gap-3">
+					<Button href="/signup" size="lg">Start free →</Button>
+					<Button href="/pricing" variant="outline" size="lg">See pricing</Button>
+				</div>
+			</div>
+		</section>
+
+		<Footer />
 	</div>
 </div>
 
