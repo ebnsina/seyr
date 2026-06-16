@@ -3,7 +3,7 @@
 ## Context
 
 GA4 is cluttered, slow, consent-heavy, and overkill for most site owners. The goal is a
-**Plausible/Fathom-style alternative**: a single clean dashboard with the numbers that
+**clean, fast alternative to Google Analytics**: a single dashboard with the numbers that
 matter (visitors, pageviews, top pages, sources, devices, countries), a tiny embeddable
 script, and a **cookieless, no-PII** design that needs no cookie banner. This is a
 greenfield build (`/Users/ebnsina/Sites/seyr` is empty) targeting a real SaaS from day
@@ -14,7 +14,7 @@ one — multi-tenant orgs, Stripe billing, and plan limits.
   the initial Bun + Hono build for predictable throughput and a small static-binary
   deploy; the wire contract + ClickHouse schema were kept identical so the swap was
   contained).
-- **Event store:** ClickHouse (columnar OLAP — same choice as Plausible).
+- **Event store:** ClickHouse (columnar OLAP, ideal for high-volume event aggregation).
 - **App/relational DB:** Postgres (users, orgs, sites, billing).
 - **Scope:** Core analytics MVP **+ billing/SaaS** (orgs, Stripe, plan limits).
 - **Privacy:** Cookieless, no PII. Daily-rotating salt for visitor hashing; no cross-day
@@ -110,8 +110,7 @@ columns:
 
 - **No cookies, no localStorage** in the tracker. No persistent ID ever leaves the browser.
 - **`visitor_id` = hash(daily_salt + ip + user_agent + domain)**. The salt rotates every
-  24h and old salts are discarded, so a visitor cannot be tracked across days — matches
-  Plausible's approach.
+  24h and old salts are discarded, so a visitor cannot be tracked across days.
 - **IP and raw UA are never stored** — used transiently in the ingestor to compute geo +
   device, then dropped before insert.
 - No cross-site tracking, no fingerprinting, no PII. This is what lets customers drop the
@@ -195,7 +194,7 @@ SaaS ingestion domain gets added to blocklists quickly. Mitigations baked into t
     (e.g. a strong display face + clean mono for numbers), a cohesive custom color system
     with light/dark themes, generous spacing, subtle depth (soft shadows, layered cards,
     optional glassmorphism), and a memorable accent. Aim for a signature look closer to
-    Linear/Vercel/Plausible-but-bolder than stock admin templates.
+    Linear/Vercel-grade and bolder than stock admin templates.
   - **Component base:** Tailwind + shadcn-svelte as primitives, then **heavily themed** so
     it doesn't look like default shadcn. Build a small design-token layer first (colors,
     radii, shadows, motion timings) so polish is consistent everywhere.

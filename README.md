@@ -1,7 +1,6 @@
 # seyr
 
-Privacy-first, cookieless web analytics — a clean, fast alternative to Google Analytics,
-in the spirit of Plausible and Fathom.
+Privacy-first, cookieless web analytics — a clean, fast alternative to Google Analytics.
 
 - **No cookies, no PII** — GDPR/CCPA-friendly by design, no cookie banner required.
 - **Lightweight tracker** — a tiny (<1KB) embeddable script.

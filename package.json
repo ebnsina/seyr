@@ -2,7 +2,7 @@
   "name": "seyr",
   "version": "0.0.0",
   "private": true,
-  "description": "Privacy-first, cookieless web analytics — a Plausible/Fathom alternative.",
+  "description": "Privacy-first, cookieless web analytics — a clean, fast alternative to Google Analytics.",
   "type": "module",
   "packageManager": "pnpm@11.1.0",
   "engines": {
