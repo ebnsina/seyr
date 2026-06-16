@@ -1,0 +1,19 @@
+{
+  "name": "@seyr/tracker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo 'lint: tracker (noop)'"
+  },
+  "dependencies": {
+    "@seyr/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.2",
+    "@types/node": "^22.10.5"
+  }
+}
