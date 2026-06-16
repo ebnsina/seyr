@@ -1,0 +1,32 @@
+{
+  "name": "@seyr/dashboard",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "node build",
+    "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "lint": "echo 'lint: dashboard (noop)'"
+  },
+  "dependencies": {
+    "@node-rs/argon2": "^2.0.2",
+    "@oslojs/crypto": "^1.0.1",
+    "@oslojs/encoding": "^1.1.0",
+    "@seyr/db": "workspace:*",
+    "@seyr/shared": "workspace:*",
+    "drizzle-orm": "^0.38.3"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-node": "^5.2.12",
+    "@sveltejs/kit": "^2.15.1",
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "@tailwindcss/vite": "^4.0.0",
+    "svelte": "^5.16.0",
+    "svelte-check": "^4.1.1",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7"
+  }
+}
