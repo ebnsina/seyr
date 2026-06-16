@@ -22,30 +22,46 @@
 	</p>
 </section>
 
-<div class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+<div class="mt-12 grid items-stretch gap-5 pt-3 md:grid-cols-2 lg:grid-cols-4">
 	{#each PLANS as plan, i (plan.tier)}
-		<div in:fly={{ y: 14, duration: 400, delay: i * 60 }}>
-			<Card class="flex h-full flex-col {plan.popular ? 'ring-1 ring-accent' : ''}">
+		<div in:fly={{ y: 14, duration: 400, delay: i * 60 }} class="h-full">
+			<div
+				class="relative flex h-full flex-col rounded-2xl border p-6
+					{plan.popular
+					? 'border-accent bg-accent-soft/15 lg:-mt-3 lg:pb-9'
+					: 'border-border bg-surface'}"
+			>
 				{#if plan.popular}
-					<Badge tone="accent" class="mb-2 self-start">Most popular</Badge>
+					<div class="absolute -top-3 left-1/2 -translate-x-1/2">
+						<Badge tone="accent">Most popular</Badge>
+					</div>
 				{/if}
+
 				<p class="font-display text-lg font-semibold">{plan.name}</p>
-				<p class="mt-1 text-sm text-muted">{plan.tagline}</p>
-				<p class="mt-4 font-mono text-3xl font-semibold">
-					{plan.priceBdt === 0 ? 'Free' : formatBdt(plan.priceBdt)}
-					{#if plan.priceBdt > 0}<span class="text-sm font-normal text-muted">/mo</span>{/if}
-				</p>
-				<ul class="mt-4 flex flex-1 flex-col gap-2 text-sm">
+				<p class="mt-1 min-h-[2.5rem] text-sm text-muted">{plan.tagline}</p>
+
+				<div class="mt-5 flex items-baseline gap-1.5">
+					<span class="font-display text-4xl font-semibold tracking-tight">
+						{plan.priceBdt === 0 ? 'Free' : formatBdt(plan.priceBdt)}
+					</span>
+					{#if plan.priceBdt > 0}<span class="text-sm text-muted">/month</span>{/if}
+				</div>
+
+				<Button href="/signup" variant={plan.popular ? 'primary' : 'outline'} class="mt-6 w-full">
+					{plan.priceBdt === 0 ? 'Start free' : 'Get ' + plan.name}
+				</Button>
+
+				<div class="my-6 h-px bg-border"></div>
+
+				<ul class="flex flex-1 flex-col gap-3 text-sm">
 					{#each plan.features as f (f)}
-						<li class="flex items-start gap-2">
-							<span class="mt-0.5 text-accent">✓</span><span class="text-muted">{f}</span>
+						<li class="flex items-start gap-2.5">
+							<svg class="mt-0.5 shrink-0 text-accent" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+							<span class="text-muted">{f}</span>
 						</li>
 					{/each}
 				</ul>
-				<Button href="/signup" variant={plan.popular ? 'primary' : 'outline'} class="mt-5 w-full">
-					{plan.priceBdt === 0 ? 'Start free' : 'Choose ' + plan.name}
-				</Button>
-			</Card>
+			</div>
 		</div>
 	{/each}
 </div>

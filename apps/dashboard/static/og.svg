@@ -1,0 +1,20 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<rect width="1200" height="630" fill="#151a14" />
+	<!-- subtle grid -->
+	<g stroke="#2a3326" stroke-width="1">
+		<path d="M0 158h1200M0 316h1200M0 474h1200M300 0v630M600 0v630M900 0v630" />
+	</g>
+	<!-- mark -->
+	<g transform="translate(96 96)">
+		<rect width="72" height="72" rx="20" fill="#a3e635" />
+		<rect x="18" y="38" width="8" height="16" rx="4" fill="#1a2e05" opacity="0.7" />
+		<rect x="32" y="27" width="8" height="27" rx="4" fill="#1a2e05" opacity="0.85" />
+		<rect x="46" y="18" width="8" height="36" rx="4" fill="#1a2e05" />
+	</g>
+	<text x="184" y="150" font-family="'Clash Display','Satoshi',sans-serif" font-size="44" font-weight="600" fill="#f4f6f2">seyr</text>
+
+	<text x="96" y="330" font-family="'Clash Display',sans-serif" font-size="78" font-weight="600" fill="#f4f6f2">Web analytics</text>
+	<text x="96" y="420" font-family="'Clash Display',sans-serif" font-size="78" font-weight="600" fill="#f4f6f2">without the <tspan fill="#a3e635">clutter</tspan>.</text>
+
+	<text x="96" y="510" font-family="'Satoshi',sans-serif" font-size="32" fill="#9aa395">Cookieless · No PII · No banner · GDPR-friendly</text>
+</svg>
