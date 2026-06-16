@@ -1,4 +1,14 @@
-import { bigint, pgEnum, pgTable, primaryKey, text, uuid } from 'drizzle-orm/pg-core';
+import {
+	bigint,
+	boolean,
+	integer,
+	pgEnum,
+	pgTable,
+	primaryKey,
+	text,
+	timestamp,
+	uuid
+} from 'drizzle-orm/pg-core';
 import { timestamps } from './_helpers';
 import { organizations } from './orgs';
 
@@ -12,7 +22,18 @@ export const subscriptionStatus = pgEnum('subscription_status', [
 	'incomplete'
 ]);
 
-/** One row per org, mirrored from Stripe via webhooks. */
+export const paymentStatus = pgEnum('payment_status', [
+	'pending',
+	'success',
+	'failed',
+	'cancelled'
+]);
+
+/**
+ * One row per org. Provider-agnostic so the payment gateway (SSLCommerz today)
+ * can change without a schema migration. `cardToken` is set when the customer
+ * paid by card and opted into tokenized auto-renewal; wallet users renew manually.
+ */
 export const subscriptions = pgTable('subscriptions', {
 	orgId: uuid('org_id')
 		.primaryKey()
@@ -21,10 +42,31 @@ export const subscriptions = pgTable('subscriptions', {
 	status: subscriptionStatus('status').notNull().default('trialing'),
 	/** Monthly included pageviews for the current plan (enforced at ingest). */
 	monthlyEventLimit: bigint('monthly_event_limit', { mode: 'number' }).notNull().default(10_000),
-	stripeCustomerId: text('stripe_customer_id').unique(),
-	stripeSubscriptionId: text('stripe_subscription_id').unique(),
-	stripePriceId: text('stripe_price_id'),
-	currentPeriodEnd: text('current_period_end'),
+	/** When the current paid period ends (null on free). */
+	currentPeriodEnd: timestamp('current_period_end', { withTimezone: true }),
+	autoRenew: boolean('auto_renew').notNull().default(false),
+	provider: text('provider').notNull().default('sslcommerz'),
+	/** Tokenized card reference for auto-renew (null for wallet/manual). */
+	cardToken: text('card_token'),
+	...timestamps
+});
+
+/** A single payment attempt against the gateway (the order/transaction record). */
+export const payments = pgTable('payments', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	orgId: uuid('org_id')
+		.notNull()
+		.references(() => organizations.id, { onDelete: 'cascade' }),
+	plan: planTier('plan').notNull(),
+	/** Whole-taka amount (BDT). */
+	amount: integer('amount').notNull(),
+	currency: text('currency').notNull().default('BDT'),
+	/** Our unique transaction id sent to the gateway. */
+	tranId: text('tran_id').notNull().unique(),
+	status: paymentStatus('status').notNull().default('pending'),
+	provider: text('provider').notNull().default('sslcommerz'),
+	/** Gateway validation id returned on success. */
+	valId: text('val_id'),
 	...timestamps
 });
 
@@ -46,7 +88,9 @@ export const usage = pgTable(
 );
 
 export type Subscription = typeof subscriptions.$inferSelect;
+export type Payment = typeof payments.$inferSelect;
 export type PlanTier = (typeof planTier.enumValues)[number];
+export type PaymentStatus = (typeof paymentStatus.enumValues)[number];
 
 /** Default monthly event allowance per plan tier. */
 export const PLAN_LIMITS: Record<PlanTier, number> = {

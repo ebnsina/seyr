@@ -1,4 +1,5 @@
 CREATE TYPE "public"."member_role" AS ENUM('owner', 'admin', 'viewer');--> statement-breakpoint
+CREATE TYPE "public"."payment_status" AS ENUM('pending', 'success', 'failed', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."plan_tier" AS ENUM('free', 'starter', 'growth', 'business');--> statement-breakpoint
 CREATE TYPE "public"."subscription_status" AS ENUM('trialing', 'active', 'past_due', 'canceled', 'incomplete');--> statement-breakpoint
 CREATE TABLE "sessions" (
@@ -49,19 +50,32 @@ CREATE TABLE "sites" (
 	CONSTRAINT "sites_share_token_unique" UNIQUE("share_token")
 );
 --> statement-breakpoint
+CREATE TABLE "payments" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"org_id" uuid NOT NULL,
+	"plan" "plan_tier" NOT NULL,
+	"amount" integer NOT NULL,
+	"currency" text DEFAULT 'BDT' NOT NULL,
+	"tran_id" text NOT NULL,
+	"status" "payment_status" DEFAULT 'pending' NOT NULL,
+	"provider" text DEFAULT 'sslcommerz' NOT NULL,
+	"val_id" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "payments_tran_id_unique" UNIQUE("tran_id")
+);
+--> statement-breakpoint
 CREATE TABLE "subscriptions" (
 	"org_id" uuid PRIMARY KEY NOT NULL,
 	"plan" "plan_tier" DEFAULT 'free' NOT NULL,
 	"status" "subscription_status" DEFAULT 'trialing' NOT NULL,
 	"monthly_event_limit" bigint DEFAULT 10000 NOT NULL,
-	"stripe_customer_id" text,
-	"stripe_subscription_id" text,
-	"stripe_price_id" text,
-	"current_period_end" text,
+	"current_period_end" timestamp with time zone,
+	"auto_renew" boolean DEFAULT false NOT NULL,
+	"provider" text DEFAULT 'sslcommerz' NOT NULL,
+	"card_token" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "subscriptions_stripe_customer_id_unique" UNIQUE("stripe_customer_id"),
-	CONSTRAINT "subscriptions_stripe_subscription_id_unique" UNIQUE("stripe_subscription_id")
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "usage" (
@@ -77,5 +91,6 @@ ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY
 ALTER TABLE "memberships" ADD CONSTRAINT "memberships_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "memberships" ADD CONSTRAINT "memberships_org_id_organizations_id_fk" FOREIGN KEY ("org_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sites" ADD CONSTRAINT "sites_org_id_organizations_id_fk" FOREIGN KEY ("org_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "payments" ADD CONSTRAINT "payments_org_id_organizations_id_fk" FOREIGN KEY ("org_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_org_id_organizations_id_fk" FOREIGN KEY ("org_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "usage" ADD CONSTRAINT "usage_org_id_organizations_id_fk" FOREIGN KEY ("org_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;

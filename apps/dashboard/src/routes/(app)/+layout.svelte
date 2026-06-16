@@ -8,6 +8,7 @@
 
 	const nav = [
 		{ href: '/sites', label: 'Sites' },
+		{ href: '/billing', label: 'Billing' },
 		{ href: '/settings', label: 'Settings' }
 	];
 
