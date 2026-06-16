@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **seyr** — privacy-first, cookieless web analytics; a clean, fast alternative to Google Analytics.
 pnpm + Turborepo monorepo. Two runtimes: **SvelteKit** (dashboard) and **Go** (ingestor). Two data
 stores: **Postgres** (relational) and **ClickHouse** (events). See `README.md` for the product
-pitch and a full VPS deploy guide; `plan.md` for the original build plan.
+pitch, `docs/DEPLOY.md` for the VPS deploy guide, and `plan.md` for the original build plan.
 
 ## Layout
 
