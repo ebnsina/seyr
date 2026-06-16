@@ -14,6 +14,9 @@
 
 	let menuOpen = $state(false);
 	const initial = $derived((data.user.name ?? data.user.email).charAt(0).toUpperCase());
+
+	const overLimit = $derived(data.usageRatio >= 1);
+	const nearLimit = $derived(data.usageRatio >= 0.8 && data.usageRatio < 1);
 </script>
 
 <div class="min-h-dvh bg-bg">
@@ -78,6 +81,23 @@
 			</nav>
 		</div>
 	</header>
+
+	{#if overLimit || nearLimit}
+		<div
+			class="border-b text-sm {overLimit
+				? 'border-danger/30 bg-danger/10 text-danger'
+				: 'border-accent/30 bg-accent-soft text-accent'}"
+		>
+			<div class="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-2">
+				<span>
+					{overLimit
+						? "You've hit your monthly event limit — some events may not be counted."
+						: "You're approaching your monthly event limit."}
+				</span>
+				<a href="/billing" class="font-medium underline underline-offset-2">Upgrade →</a>
+			</div>
+		</div>
+	{/if}
 
 	<main class="mx-auto max-w-6xl px-6 py-8">
 		{@render children()}

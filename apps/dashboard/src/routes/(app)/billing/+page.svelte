@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { fly, fade } from 'svelte/transition';
+	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import { Card, Badge, Button } from '$lib/components/ui';
 	import { PLANS, formatBdt } from '$lib/billing/plans';
@@ -65,6 +66,21 @@
 				</p>
 			{/if}
 		</div>
+
+		{#if currentTier !== 'free'}
+			<div class="flex items-center gap-2">
+				<form method="POST" action="/billing/checkout" use:enhance>
+					<input type="hidden" name="plan" value={currentTier} />
+					<Button type="submit" variant="outline" size="sm">Renew now</Button>
+				</form>
+				<form method="POST" action="?/autoRenew" use:enhance>
+					<input type="hidden" name="enabled" value={data.subscription?.autoRenew ? 'false' : 'true'} />
+					<Button type="submit" variant="ghost" size="sm">
+						{data.subscription?.autoRenew ? 'Turn off auto-renew' : 'Enable auto-renew'}
+					</Button>
+				</form>
+			</div>
+		{/if}
 	</div>
 
 	<div class="mt-5">

@@ -1,4 +1,5 @@
 import type {
+	ChargeParams,
 	InitiateParams,
 	InitiateResult,
 	PaymentProvider,
@@ -82,5 +83,12 @@ export class SslcommerzProvider implements PaymentProvider {
 			Number(data.amount) >= params.amount;
 
 		return { valid: ok, cardToken: data.token || undefined };
+	}
+
+	async chargeToken(_params: ChargeParams): Promise<{ success: boolean }> {
+		// SSLCommerz recurring charges require the "Recurring/Subscription" feature
+		// enabled on the store and use a separate API. Wire it here once the store
+		// is provisioned; until then auto-renew falls back to a manual prompt.
+		throw new Error('SSLCommerz recurring charges not configured for this store');
 	}
 }

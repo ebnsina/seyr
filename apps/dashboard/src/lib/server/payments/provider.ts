@@ -34,8 +34,18 @@ export interface ValidateResult {
 	cardToken?: string;
 }
 
+export interface ChargeParams {
+	tranId: string;
+	amount: number;
+	currency: string;
+	cardToken: string;
+	planName: string;
+}
+
 export interface PaymentProvider {
 	readonly name: string;
 	initiate(params: InitiateParams): Promise<InitiateResult>;
 	validate(params: ValidateParams): Promise<ValidateResult>;
+	/** Charge a stored card token for auto-renewal (optional per provider). */
+	chargeToken?(params: ChargeParams): Promise<{ success: boolean }>;
 }

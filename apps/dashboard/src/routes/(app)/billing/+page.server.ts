@@ -1,6 +1,11 @@
+import { eq } from 'drizzle-orm';
+import { fail } from '@sveltejs/kit';
+import { subscriptions } from '@seyr/db/pg';
+import { db } from '$lib/server/db';
 import { getMonthToDateUsage, getSubscription } from '$lib/server/billing';
+import { getUserOrgs } from '$lib/server/orgs';
 import { getPlan } from '$lib/billing/plans';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ parent }) => {
 	const { currentOrg } = await parent();
@@ -21,4 +26,19 @@ export const load: PageServerLoad = async ({ parent }) => {
 		limit: subscription.monthlyEventLimit,
 		usage
 	};
+};
+
+export const actions: Actions = {
+	autoRenew: async ({ request, locals }) => {
+		if (!locals.user) return fail(401);
+		const org = (await getUserOrgs(locals.user.id))[0];
+		if (!org) return fail(400);
+
+		const enabled = (await request.formData()).get('enabled') === 'true';
+		await db
+			.update(subscriptions)
+			.set({ autoRenew: enabled })
+			.where(eq(subscriptions.orgId, org.id));
+		return { autoRenewSet: enabled };
+	}
 };

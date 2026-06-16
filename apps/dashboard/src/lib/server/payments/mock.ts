@@ -1,4 +1,5 @@
 import type {
+	ChargeParams,
 	InitiateParams,
 	InitiateResult,
 	PaymentProvider,
@@ -25,5 +26,9 @@ export class MockProvider implements PaymentProvider {
 	async validate(params: ValidateParams): Promise<ValidateResult> {
 		// A mock card token simulates a tokenized (auto-renewable) card payment.
 		return { valid: params.valId.startsWith('mock_'), cardToken: `mocktok_${params.tranId}` };
+	}
+
+	async chargeToken(params: ChargeParams): Promise<{ success: boolean }> {
+		return { success: params.cardToken.startsWith('mocktok_') };
 	}
 }
