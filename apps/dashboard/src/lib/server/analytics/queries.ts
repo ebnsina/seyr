@@ -48,11 +48,47 @@ export interface TimeseriesPoint {
 	pageviews: number;
 }
 
+const DAILY_ROLLUP = 'events_daily';
+
+function hasActiveFilters(scope: QueryScope): boolean {
+	return Object.values(scope.filters).some((v) => v !== undefined && v !== '');
+}
+
+/**
+ * Daily series from the pre-aggregated rollup (AggregatingMergeTree). Used for
+ * unfiltered daily ranges — far cheaper than scanning raw events at scale.
+ */
+async function getTimeseriesFromRollup(scope: QueryScope): Promise<TimeseriesPoint[]> {
+	const from = new Date(scope.range.from).toISOString().slice(0, 19).replace('T', ' ');
+	const to = new Date(scope.range.to).toISOString().slice(0, 19).replace('T', ' ');
+	const rows = await queryRows<{ bucket: string; visitors: string; pageviews: string }>(
+		`SELECT toString(date) AS bucket, sum(pageviews) AS pageviews, uniqMerge(visitors) AS visitors
+		 FROM ${DAILY_ROLLUP}
+		 WHERE site_id = {siteId:UInt64}
+		   AND date >= toDate(parseDateTimeBestEffort({from:String}))
+		   AND date <= toDate(parseDateTimeBestEffort({to:String}))
+		 GROUP BY date ORDER BY date WITH FILL
+			FROM toDate(parseDateTimeBestEffort({from:String}))
+			TO toDate(parseDateTimeBestEffort({to:String})) + 1 STEP 1`,
+		{ siteId: scope.siteId.toString(), from, to }
+	);
+	return rows.map((r) => ({
+		// Normalize to the same shape the raw query returns for the chart.
+		bucket: `${r.bucket} 00:00:00`,
+		visitors: Number(r.visitors),
+		pageviews: Number(r.pageviews)
+	}));
+}
+
 /** Visitors/pageviews over time, zero-filled into continuous buckets. */
 export async function getTimeseries(scope: QueryScope): Promise<TimeseriesPoint[]> {
-	const { clause, params } = buildWhere(scope);
 	const spanMs = scope.range.to - scope.range.from;
 	const hourly = spanMs <= 1000 * 60 * 60 * 48;
+
+	// Daily + unfiltered → serve from the rollup; otherwise scan raw events.
+	if (!hourly && !hasActiveFilters(scope)) return getTimeseriesFromRollup(scope);
+
+	const { clause, params } = buildWhere(scope);
 	const fn = hourly ? 'toStartOfHour' : 'toStartOfDay';
 	const step = hourly ? 'toIntervalHour(1)' : 'toIntervalDay(1)';
 
