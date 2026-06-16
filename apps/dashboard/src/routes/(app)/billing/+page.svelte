@@ -1,10 +1,21 @@
 <script lang="ts">
-	import { fly } from 'svelte/transition';
+	import { fly, fade } from 'svelte/transition';
+	import { page } from '$app/state';
 	import { Card, Badge, Button } from '$lib/components/ui';
 	import { PLANS, formatBdt } from '$lib/billing/plans';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+
+	const banner = $derived(
+		page.url.searchParams.has('paid')
+			? { tone: 'success' as const, text: 'Payment successful — your plan is active. 🎉' }
+			: page.url.searchParams.has('failed')
+				? { tone: 'danger' as const, text: 'Payment failed or could not be verified. Please try again.' }
+				: page.url.searchParams.has('cancelled')
+					? { tone: 'muted' as const, text: 'Payment cancelled.' }
+					: null
+	);
 
 	const usagePct = $derived(
 		data.limit > 0 ? Math.min(100, Math.round((data.usage / data.limit) * 100)) : 0
@@ -27,6 +38,18 @@
 
 <h1 class="font-display text-2xl font-semibold tracking-tight">Billing</h1>
 <p class="mt-1 text-sm text-muted">Manage your plan and usage. Payments in BDT via SSLCommerz.</p>
+
+{#if banner}
+	<div
+		in:fade
+		class="mt-4 rounded-lg px-4 py-3 text-sm
+			{banner.tone === 'success' ? 'bg-success/10 text-success' : ''}
+			{banner.tone === 'danger' ? 'bg-danger/10 text-danger' : ''}
+			{banner.tone === 'muted' ? 'bg-surface-2 text-muted' : ''}"
+	>
+		{banner.text}
+	</div>
+{/if}
 
 <!-- current plan + usage -->
 <Card class="mt-6">
