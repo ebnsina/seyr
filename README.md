@@ -38,8 +38,3 @@ pnpm ingestor:dev    # run the Go ingestion service
 ```
 
 See [plan.md](./plan.md) for the full build plan.
-
-## Deployment
-
-See [docs/DEPLOY.md](./docs/DEPLOY.md) for a step-by-step VPS deployment guide
-(Docker, systemd, Caddy, TLS, migrations, and the renewal cron).
