@@ -11,6 +11,8 @@
 		formatLabel?: (label: string) => string;
 		/** Header for the right-hand metric column. */
 		metricLabel?: string;
+		/** Bar tint (hex) — each panel gets a distinct hue for visual variety. */
+		barColor?: string;
 		emptyHint?: string;
 	};
 
@@ -20,6 +22,7 @@
 		onselect,
 		formatLabel = (l) => l,
 		metricLabel = 'Visitors',
+		barColor = '#a3e635',
 		emptyHint = 'No data yet'
 	}: Props = $props();
 
@@ -46,8 +49,8 @@
 					>
 						<!-- relative-width bar behind the row -->
 						<span
-							class="absolute inset-y-0 left-0 rounded-md bg-accent-soft transition-[width] duration-500 ease-out"
-							style="width: {(row.visitors / max) * 100}%"
+							class="absolute inset-y-0 left-0 rounded-md transition-[width] duration-500 ease-out"
+							style="width: {(row.visitors / max) * 100}%; background-color: {barColor}2b"
 						></span>
 						<span class="relative z-10 truncate text-sm">{formatLabel(row.label)}</span>
 						<span class="relative z-10 ml-3 font-mono text-sm tabular-nums text-muted group-hover:text-text">

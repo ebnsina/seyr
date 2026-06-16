@@ -17,12 +17,12 @@
 	];
 
 	const PANELS = [
-		{ key: 'page', title: 'Top Pages' },
-		{ key: 'source', title: 'Sources' },
-		{ key: 'country', title: 'Countries' },
-		{ key: 'browser', title: 'Browsers' },
-		{ key: 'os', title: 'Operating Systems' },
-		{ key: 'device', title: 'Devices' }
+		{ key: 'page', title: 'Top Pages', color: '#a3e635' },
+		{ key: 'source', title: 'Sources', color: '#22d3ee' },
+		{ key: 'country', title: 'Countries', color: '#fbbf24' },
+		{ key: 'browser', title: 'Browsers', color: '#a78bfa' },
+		{ key: 'os', title: 'Operating Systems', color: '#fb7185' },
+		{ key: 'device', title: 'Devices', color: '#60a5fa' }
 	] as const;
 
 	const FILTER_LABELS: Record<string, string> = {
@@ -126,6 +126,7 @@
 	{#each PANELS as panel (panel.key)}
 		<BreakdownPanel
 			title={panel.title}
+			barColor={panel.color}
 			rows={data.dashboard.breakdowns[panel.key]}
 			onselect={(label) => navigate({ [panel.key]: label })}
 		/>
@@ -137,6 +138,7 @@
 	<BreakdownPanel
 		title="Goals & Custom Events"
 		metricLabel="Completions"
+		barColor="#fb923c"
 		emptyHint="No custom events yet — fire them with seyr('event', 'Name')."
 		rows={data.dashboard.customEvents.map((e) => ({
 			label: e.label,

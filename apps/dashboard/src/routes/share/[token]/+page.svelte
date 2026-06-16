@@ -16,12 +16,12 @@
 		{ key: '90d', label: '90d' }
 	];
 	const PANELS = [
-		{ key: 'page', title: 'Top Pages' },
-		{ key: 'source', title: 'Sources' },
-		{ key: 'country', title: 'Countries' },
-		{ key: 'browser', title: 'Browsers' },
-		{ key: 'os', title: 'Operating Systems' },
-		{ key: 'device', title: 'Devices' }
+		{ key: 'page', title: 'Top Pages', color: '#a3e635' },
+		{ key: 'source', title: 'Sources', color: '#22d3ee' },
+		{ key: 'country', title: 'Countries', color: '#fbbf24' },
+		{ key: 'browser', title: 'Browsers', color: '#a78bfa' },
+		{ key: 'os', title: 'Operating Systems', color: '#fb7185' },
+		{ key: 'device', title: 'Devices', color: '#60a5fa' }
 	] as const;
 
 	function setRange(r: string) {
@@ -86,7 +86,7 @@
 
 		<div class="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
 			{#each PANELS as panel (panel.key)}
-				<BreakdownPanel title={panel.title} rows={data.dashboard.breakdowns[panel.key]} />
+				<BreakdownPanel title={panel.title} barColor={panel.color} rows={data.dashboard.breakdowns[panel.key]} />
 			{/each}
 		</div>
 
@@ -95,6 +95,7 @@
 				<BreakdownPanel
 					title="Goals & Custom Events"
 					metricLabel="Completions"
+					barColor="#fb923c"
 					rows={data.dashboard.customEvents.map((e) => ({
 						label: e.label,
 						visitors: e.count,
