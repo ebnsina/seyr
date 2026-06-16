@@ -61,7 +61,7 @@
 							aria-label="Close menu"
 						></button>
 						<div
-							class="absolute right-0 z-20 mt-2 w-56 rounded-xl border border-border bg-surface p-1.5 shadow-xl"
+							class="absolute right-0 z-20 mt-2 w-56 rounded-xl border border-border bg-surface p-1.5"
 						>
 							<div class="px-3 py-2">
 								<p class="truncate text-sm font-medium">{data.user.name ?? 'Account'}</p>

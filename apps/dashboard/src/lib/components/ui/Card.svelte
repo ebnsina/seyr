@@ -12,9 +12,9 @@
 </script>
 
 <div
-	class="rounded-xl border border-border bg-surface p-5 shadow-sm
+	class="rounded-xl border border-border bg-surface p-5
 		{interactive
-		? 'transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-[0_12px_40px_-18px_var(--accent)]'
+		? 'transition-[transform,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-accent/50'
 		: ''}
 		{klass}"
 >

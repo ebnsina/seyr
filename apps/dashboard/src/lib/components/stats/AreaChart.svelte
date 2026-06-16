@@ -111,7 +111,7 @@
 	{#if hover !== null && points[hover]}
 		{@const p = points[hover]}
 		<div
-			class="pointer-events-none absolute top-2 z-10 -translate-x-1/2 rounded-lg border border-border bg-surface px-3 py-2 text-xs shadow-lg"
+			class="pointer-events-none absolute top-2 z-10 -translate-x-1/2 rounded-lg border border-border bg-surface px-3 py-2 text-xs"
 			style="left: {Math.min(Math.max(x(hover), 70), width - 70)}px"
 		>
 			<p class="font-medium">{fmt(p.bucket)}</p>

@@ -10,37 +10,39 @@
  */
 
 :root {
-	--bg: oklch(0.99 0.004 280);
+	--bg: oklch(0.99 0.003 150);
 	--surface: oklch(1 0 0);
-	--surface-2: oklch(0.975 0.005 280);
-	--border: oklch(0.92 0.006 280);
-	--text: oklch(0.24 0.02 280);
-	--muted: oklch(0.55 0.02 280);
-	--accent: oklch(0.58 0.21 285);
-	--accent-hover: oklch(0.53 0.21 285);
-	--accent-fg: oklch(0.99 0.01 280);
-	--accent-soft: oklch(0.94 0.04 285);
+	--surface-2: oklch(0.975 0.004 150);
+	--border: oklch(0.92 0.005 150);
+	--text: oklch(0.24 0.01 150);
+	--muted: oklch(0.55 0.012 150);
+	/* Deeper lime in light mode so links/text stay readable on white. */
+	--accent: oklch(0.6 0.16 132);
+	--accent-hover: oklch(0.55 0.16 132);
+	--accent-fg: oklch(0.2 0.03 132);
+	--accent-soft: oklch(0.93 0.07 132);
 	--cyan: oklch(0.7 0.13 210);
-	--success: oklch(0.65 0.16 150);
+	--success: oklch(0.6 0.14 165);
 	--danger: oklch(0.58 0.21 25);
-	--ring: oklch(0.58 0.21 285 / 0.5);
+	--ring: oklch(0.6 0.16 132 / 0.45);
 }
 
 .dark {
-	--bg: oklch(0.16 0.014 280);
-	--surface: oklch(0.195 0.018 280);
-	--surface-2: oklch(0.235 0.02 280);
-	--border: oklch(0.3 0.02 280);
-	--text: oklch(0.96 0.008 280);
-	--muted: oklch(0.68 0.02 280);
-	--accent: oklch(0.7 0.18 285);
-	--accent-hover: oklch(0.76 0.17 285);
-	--accent-fg: oklch(0.16 0.014 280);
-	--accent-soft: oklch(0.3 0.06 285);
+	--bg: oklch(0.15 0.006 160);
+	--surface: oklch(0.19 0.008 160);
+	--surface-2: oklch(0.235 0.009 160);
+	--border: oklch(0.3 0.01 160);
+	--text: oklch(0.96 0.005 160);
+	--muted: oklch(0.68 0.012 160);
+	/* Bright chartreuse in dark mode — high contrast on near-black. */
+	--accent: oklch(0.84 0.19 128);
+	--accent-hover: oklch(0.89 0.17 128);
+	--accent-fg: oklch(0.2 0.04 128);
+	--accent-soft: oklch(0.33 0.09 128);
 	--cyan: oklch(0.78 0.13 210);
-	--success: oklch(0.72 0.16 150);
+	--success: oklch(0.72 0.15 165);
 	--danger: oklch(0.68 0.2 25);
-	--ring: oklch(0.7 0.18 285 / 0.55);
+	--ring: oklch(0.84 0.19 128 / 0.5);
 }
 
 @theme inline {

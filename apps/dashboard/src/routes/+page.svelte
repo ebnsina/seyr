@@ -64,7 +64,7 @@
 			<!-- faux dashboard preview -->
 			<div in:fly={{ x: 24, duration: 800, delay: 300, easing: cubicOut }}>
 				<div
-					class="rounded-2xl border border-border bg-surface/80 p-5 shadow-2xl backdrop-blur-sm"
+					class="rounded-2xl border border-border bg-surface/80 p-5 backdrop-blur-sm"
 				>
 					<div class="mb-4 flex items-center justify-between">
 						<div>

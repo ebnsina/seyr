@@ -31,8 +31,7 @@
 		'active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none';
 
 	const variants: Record<Variant, string> = {
-		primary:
-			'bg-accent text-accent-fg hover:bg-accent-hover shadow-[0_4px_20px_-6px_var(--accent)] hover:shadow-[0_6px_28px_-6px_var(--accent)]',
+		primary: 'bg-accent text-accent-fg hover:bg-accent-hover',
 		outline: 'border border-border bg-surface text-text hover:bg-surface-2',
 		ghost: 'text-muted hover:text-text hover:bg-surface-2',
 		danger: 'bg-danger text-white hover:opacity-90'
