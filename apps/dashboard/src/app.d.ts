@@ -1,9 +1,10 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
+import type { SessionUser } from '$lib/server/auth/session';
+
 declare global {
 	namespace App {
 		interface Locals {
-			// Populated by the auth handle hook (Phase B).
-			user: { id: string; email: string; name: string | null } | null;
+			user: SessionUser | null;
 			sessionId: string | null;
 		}
 	}
