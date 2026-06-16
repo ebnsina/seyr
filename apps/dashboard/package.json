@@ -8,6 +8,8 @@
     "build": "vite build",
     "preview": "node build",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "echo 'lint: dashboard (noop)'"
   },
   "dependencies": {
@@ -27,6 +29,7 @@
     "svelte-check": "^4.1.1",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.3",
-    "vite": "^6.0.7"
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8"
   }
 }
