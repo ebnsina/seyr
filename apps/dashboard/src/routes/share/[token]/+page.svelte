@@ -89,5 +89,19 @@
 				<BreakdownPanel title={panel.title} rows={data.dashboard.breakdowns[panel.key]} />
 			{/each}
 		</div>
+
+		{#if data.dashboard.customEvents.length}
+			<div class="mt-3">
+				<BreakdownPanel
+					title="Goals & Custom Events"
+					metricLabel="Completions"
+					rows={data.dashboard.customEvents.map((e) => ({
+						label: e.label,
+						visitors: e.count,
+						pageviews: e.visitors
+					}))}
+				/>
+			</div>
+		{/if}
 	</main>
 </div>

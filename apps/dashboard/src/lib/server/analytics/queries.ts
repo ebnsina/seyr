@@ -91,6 +91,28 @@ export interface BreakdownRow {
 	pageviews: number;
 }
 
+export interface CustomEventRow {
+	label: string; // event name
+	count: number; // total occurrences (conversions)
+	visitors: number; // unique visitors who triggered it
+}
+
+/** Top custom events (everything that isn't a pageview), ranked by occurrences. */
+export async function getCustomEvents(scope: QueryScope, limit = 8): Promise<CustomEventRow[]> {
+	const { clause, params } = buildWhere(scope);
+	const rows = await queryRows<{ label: string; count: string; visitors: string }>(
+		`SELECT name AS label, count() AS count, uniq(visitor_id) AS visitors
+		 FROM ${EVENTS_TABLE} WHERE ${clause} AND name != 'pageview'
+		 GROUP BY label ORDER BY count DESC LIMIT {limit:UInt32}`,
+		{ ...params, limit }
+	);
+	return rows.map((r) => ({
+		label: r.label,
+		count: Number(r.count),
+		visitors: Number(r.visitors)
+	}));
+}
+
 /** Top values for a dimension, ranked by unique visitors. */
 export async function getBreakdown(
 	scope: QueryScope,

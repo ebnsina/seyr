@@ -131,3 +131,17 @@
 		/>
 	{/each}
 </div>
+
+<!-- goals & custom events -->
+<div class="mt-3">
+	<BreakdownPanel
+		title="Goals & Custom Events"
+		metricLabel="Completions"
+		emptyHint="No custom events yet — fire them with seyr('event', 'Name')."
+		rows={data.dashboard.customEvents.map((e) => ({
+			label: e.label,
+			visitors: e.count,
+			pageviews: e.visitors
+		}))}
+	/>
+</div>

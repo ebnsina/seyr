@@ -9,11 +9,19 @@
 		onselect?: (label: string) => void;
 		/** Optional label formatter (e.g. country code → name). */
 		formatLabel?: (label: string) => string;
+		/** Header for the right-hand metric column. */
+		metricLabel?: string;
 		emptyHint?: string;
 	};
 
-	let { title, rows, onselect, formatLabel = (l) => l, emptyHint = 'No data yet' }: Props =
-		$props();
+	let {
+		title,
+		rows,
+		onselect,
+		formatLabel = (l) => l,
+		metricLabel = 'Visitors',
+		emptyHint = 'No data yet'
+	}: Props = $props();
 
 	const max = $derived(Math.max(1, ...rows.map((r) => r.visitors)));
 </script>
@@ -21,7 +29,7 @@
 <div class="rounded-xl border border-border bg-surface p-5">
 	<div class="mb-3 flex items-center justify-between">
 		<h3 class="text-sm font-semibold">{title}</h3>
-		<span class="text-xs text-muted">Visitors</span>
+		<span class="text-xs text-muted">{metricLabel}</span>
 	</div>
 
 	{#if rows.length === 0}

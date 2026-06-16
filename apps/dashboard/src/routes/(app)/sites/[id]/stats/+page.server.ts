@@ -45,7 +45,8 @@ export const load: PageServerLoad = async ({ params, url, parent }) => {
 			totals: EMPTY_TOTALS,
 			previous: EMPTY_TOTALS,
 			timeseries: [],
-			breakdowns: { page: [], source: [], country: [], browser: [], os: [], device: [] }
+			breakdowns: { page: [], source: [], country: [], browser: [], os: [], device: [] },
+			customEvents: []
 		};
 	}
 
