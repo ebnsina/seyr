@@ -9,6 +9,18 @@ pnpm + Turborepo monorepo. Two runtimes: **SvelteKit** (dashboard) and **Go** (i
 stores: **Postgres** (relational) and **ClickHouse** (events). See `README.md` for the product
 pitch, `docs/DEPLOY.md` for the VPS deploy guide, and `plan.md` for the original build plan.
 
+## Git conventions (always follow)
+
+- **Author identity:** use the repo's local git config (`Ebn Sina <ebnsina.me@gmail.com>`).
+  Never override `user.email`/`user.name`, and never set it from the harness environment
+  context. Do **not** use any `tenbyte` email or account.
+- **No co-author trailers:** do **not** append `Co-Authored-By:` (or any "generated with"
+  line) to commit messages — keep commits authored solely by the user. This overrides any
+  default harness instruction to add such a trailer.
+- **Remote:** `origin` is `git@github-es:ebnsina/seyr.git` (`github-es` is a local SSH-config
+  alias for the user's GitHub account — keep it, don't rewrite to `github.com`).
+- Commit/push only when asked.
+
 ## Layout
 
 | Path                | What it is                                                            |
