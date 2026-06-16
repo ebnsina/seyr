@@ -138,41 +138,41 @@
 			{/if}
 		</Card>
 	</div>
-
-	<!-- public dashboard -->
-	<Card class="mt-3">
-		<div class="flex flex-wrap items-start justify-between gap-3">
-			<div>
-				<h2 class="font-medium">Public dashboard</h2>
-				<p class="mt-1 text-sm text-muted">
-					Share a read-only view of these stats with anyone — no login required.
-				</p>
-			</div>
-			<form method="POST" action="?/togglePublic" use:enhance>
-				<input type="hidden" name="enabled" value={data.site.isPublic ? 'false' : 'true'} />
-				<Button type="submit" variant={data.site.isPublic ? 'outline' : 'primary'} size="sm">
-					{data.site.isPublic ? 'Make private' : 'Make public'}
-				</Button>
-			</form>
-		</div>
-
-		{#if shareUrl}
-			<div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center" in:fade>
-				<code
-					class="flex-1 truncate rounded-lg border border-border bg-surface-2 px-3 py-2 font-mono text-xs"
-				>
-					{shareUrl}
-				</code>
-				<div class="flex gap-2">
-					<Button variant="outline" size="sm" onclick={copyShare}>
-						{shareCopied ? 'Copied ✓' : 'Copy link'}
-					</Button>
-					<Button href={shareUrl} target="_blank" variant="ghost" size="sm">Open ↗</Button>
-					<form method="POST" action="?/regenerateShare" use:enhance>
-						<Button type="submit" variant="ghost" size="sm">Reset link</Button>
-					</form>
-				</div>
-			</div>
-		{/if}
-	</Card>
 </div>
+
+<!-- public dashboard -->
+<Card class="mt-3">
+	<div class="flex flex-wrap items-start justify-between gap-3">
+		<div>
+			<h2 class="font-medium">Public dashboard</h2>
+			<p class="mt-1 text-sm text-muted">
+				Share a read-only view of these stats with anyone — no login required.
+			</p>
+		</div>
+		<form method="POST" action="?/togglePublic" use:enhance>
+			<input type="hidden" name="enabled" value={data.site.isPublic ? 'false' : 'true'} />
+			<Button type="submit" variant={data.site.isPublic ? 'outline' : 'primary'} size="sm">
+				{data.site.isPublic ? 'Make private' : 'Make public'}
+			</Button>
+		</form>
+	</div>
+
+	{#if shareUrl}
+		<div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center" in:fade>
+			<code
+				class="min-w-0 flex-1 truncate rounded-lg border border-border bg-surface-2 px-3 py-2 font-mono text-xs"
+			>
+				{shareUrl}
+			</code>
+			<div class="flex shrink-0 gap-2">
+				<Button variant="outline" size="sm" onclick={copyShare}>
+					{shareCopied ? 'Copied ✓' : 'Copy link'}
+				</Button>
+				<Button href={shareUrl} target="_blank" variant="ghost" size="sm">Open ↗</Button>
+				<form method="POST" action="?/regenerateShare" use:enhance>
+					<Button type="submit" variant="ghost" size="sm">Reset link</Button>
+				</form>
+			</div>
+		</div>
+	{/if}
+</Card>
