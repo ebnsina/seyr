@@ -36,5 +36,3 @@ pnpm infra:up        # start Postgres + ClickHouse
 pnpm dev             # run JS apps/packages (dashboard, tracker) via Turborepo
 pnpm ingestor:dev    # run the Go ingestion service
 ```
-
-See [plan.md](./plan.md) for the full build plan.
