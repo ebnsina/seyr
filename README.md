@@ -11,9 +11,9 @@ in the spirit of Plausible and Fathom.
 ## Architecture
 
 ```
-tracker.js  ──beacon──▶  ingestor (Bun + Hono)  ──batch──▶  ClickHouse  (events)
-                                                                  ▲
-dashboard (SvelteKit)  ──────────────────read queries────────────┘
+tracker.js  ──beacon──▶  ingestor (Go)  ──batch──▶  ClickHouse  (events)
+                                                          ▲
+dashboard (SvelteKit)  ──────────────read queries────────┘
         │
         └──▶ Postgres  (users, orgs, sites, billing)
 ```
@@ -21,20 +21,21 @@ dashboard (SvelteKit)  ──────────────────rea
 | Package            | What it is                                                       |
 | ------------------ | ---------------------------------------------------------------- |
 | `apps/dashboard`   | SvelteKit app — UI, auth, billing, read API                      |
-| `apps/ingestor`    | Bun + Hono service — event ingestion + batched ClickHouse writer |
+| `apps/ingestor`    | Go service — event ingestion + batched ClickHouse writer         |
 | `packages/tracker` | Source for the embeddable browser script                         |
 | `packages/db`      | Drizzle schema/migrations (Postgres) + ClickHouse client         |
 | `packages/shared`  | Shared zod schemas, parsing helpers, config/types               |
 
 ## Getting started
 
-Requires Node 22+, pnpm 11+, Bun 1.3+, and Docker.
+Requires Node 22+, pnpm 11+, Go 1.24+, and Docker.
 
 ```bash
 pnpm install
 cp .env.example .env
-pnpm infra:up      # start Postgres + ClickHouse
-pnpm dev           # run all apps
+pnpm infra:up        # start Postgres + ClickHouse
+pnpm dev             # run JS apps/packages (dashboard, tracker) via Turborepo
+pnpm ingestor:dev    # run the Go ingestion service
 ```
 
 See [plan.md](./plan.md) for the full build plan.

@@ -18,7 +18,10 @@
     "format": "prettier --write \"**/*.{ts,svelte,js,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,svelte,js,json,md}\"",
     "infra:up": "docker compose --env-file .env -f infra/docker-compose.yml up -d",
-    "infra:down": "docker compose --env-file .env -f infra/docker-compose.yml down"
+    "infra:down": "docker compose --env-file .env -f infra/docker-compose.yml down",
+    "ingestor:dev": "cd apps/ingestor && go run ./cmd/ingestor",
+    "ingestor:build": "cd apps/ingestor && go build -o bin/ingestor ./cmd/ingestor",
+    "ingestor:test": "cd apps/ingestor && go test ./..."
   },
   "devDependencies": {
     "prettier": "^3.4.2",

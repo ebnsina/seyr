@@ -10,7 +10,10 @@ greenfield build (`/Users/ebnsina/Sites/seyr` is empty) targeting a real SaaS fr
 one — multi-tenant orgs, Stripe billing, and plan limits.
 
 ### Decisions locked with the user
-- **Stack:** SvelteKit dashboard **+ a separate lightweight ingestion service** (Bun + Hono).
+- **Stack:** SvelteKit dashboard **+ a separate ingestion service in Go** (switched from
+  the initial Bun + Hono build for predictable throughput and a small static-binary
+  deploy; the wire contract + ClickHouse schema were kept identical so the swap was
+  contained).
 - **Event store:** ClickHouse (columnar OLAP — same choice as Plausible).
 - **App/relational DB:** Postgres (users, orgs, sites, billing).
 - **Scope:** Core analytics MVP **+ billing/SaaS** (orgs, Stripe, plan limits).
@@ -27,10 +30,10 @@ one — multi-tenant orgs, Stripe billing, and plan limits.
   Customer's website      │  tracker.js  (<1KB)     │
   <script ... seyr.js>───▶│  sends pageview beacon  │
                           └───────────┬─────────────┘
-                                      │ POST /event (tiny JSON)
+                                      │ POST /i (tiny JSON)
                                       ▼
                           ┌─────────────────────────┐        ┌──────────────┐
-                          │  INGESTOR (Bun + Hono)  │───────▶│  ClickHouse  │
+                          │  INGESTOR (Go)          │───────▶│  ClickHouse  │
                           │  validate → hash → buffer│ batch  │   events     │
                           │  → batch insert          │ insert └──────────────┘
                           └─────────────────────────┘                ▲
@@ -53,7 +56,7 @@ events.
 seyr/
   apps/
     dashboard/      # SvelteKit — UI, auth, billing, read API
-    ingestor/       # Bun + Hono — /event ingestion + batch writer to ClickHouse
+    ingestor/       # Go — /i ingestion + batch writer to ClickHouse
   packages/
     tracker/        # source for the embeddable script (built to dist/seyr.js)
     db/             # Drizzle schema + migrations (Postgres) + ClickHouse client/schema
@@ -156,21 +159,22 @@ SaaS ingestion domain gets added to blocklists quickly. Mitigations baked into t
 - Exposes `window.seyr('event', name, props)` for custom events (server enforces prop
   limits). Auto-events deferred (user chose lightweight-only for now).
 
-### 2. `apps/ingestor` — Bun + Hono service
-- Single hot route `POST /event` (+ `GET /health`).
-- Pipeline: parse → zod-validate → bot filter (UA + known-bot list) → derive
-  geo (MaxMind GeoLite2 or IP API) + device (UA parser) → compute `visitor_id` with
-  current salt → enqueue.
-- **Batched async writes**: buffer events in memory and flush to ClickHouse every ~1–2s
-  or N rows (ClickHouse hates many small inserts). Graceful flush on shutdown.
+### 2. `apps/ingestor` — Go service
+- Single hot route `POST /i` (+ `GET /health`, `OPTIONS /i` for CORS preflight).
+- Pipeline: decode → validate (mirrors the zod schema) → bot filter (UA regex) → derive
+  geo (CDN country headers; MaxMind GeoLite2 a drop-in for region/city) + device
+  (`mileusna/useragent`) → compute `visitor_id` with current salt → enqueue.
+- **Batched async writes**: a single goroutine buffers rows and flushes to ClickHouse by
+  size or interval (ClickHouse hates many small inserts). Graceful drain on
+  `SIGINT`/`SIGTERM`. Saturated-queue rows are dropped + counted to protect latency.
 - Returns `202` fast; never blocks the beacon on the DB write.
-- Salt manager: in-memory daily salt, regenerated at UTC midnight (persist current+prev
-  salt in Redis/Postgres so multiple instances agree).
-- CORS open for `/event` (must accept hits from any customer domain).
-- **Why Bun + Hono:** keeps the whole codebase TypeScript (shared zod schemas / parsing
-  with the dashboard) while staying tiny and fast. *Alternative if throughput becomes the
-  bottleneck: rewrite this one service in Go — the contract (payload + ClickHouse schema)
-  stays identical, so it's a contained swap.*
+- Salt manager: daily salt derived from `secret + UTC date` — stable within a day across
+  restarts, unlinkable across days (swap for a random salt in Redis for stronger privacy).
+- CORS open for `/i` (must accept hits from any customer domain).
+- **Why Go:** predictable low-latency throughput, low per-instance memory, and a small
+  static-binary deploy. The beacon wire contract + ClickHouse/Postgres schemas are shared
+  with the rest of the stack (owned by `@seyr/db` / `infra`), so Go only reimplements the
+  small amount of pure parsing logic.
 
 ### 3. `apps/dashboard` — SvelteKit
 - **Auth:** Lucia (or Better Auth) with email/password + magic link; sessions in Postgres.

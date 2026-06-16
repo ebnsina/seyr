@@ -31,3 +31,6 @@ data/
 
 # Geo databases (downloaded, large)
 *.mmdb
+
+# Go build output
+apps/ingestor/bin/
