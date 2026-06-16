@@ -1,0 +1,28 @@
+{
+  "name": "seyr",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Privacy-first, cookieless web analytics — a Plausible/Fathom alternative.",
+  "type": "module",
+  "packageManager": "pnpm@11.1.0",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=11"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,svelte,js,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,svelte,js,json,md}\"",
+    "infra:up": "docker compose -f infra/docker-compose.yml up -d",
+    "infra:down": "docker compose -f infra/docker-compose.yml down"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3"
+  }
+}
