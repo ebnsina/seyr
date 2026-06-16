@@ -7,7 +7,7 @@
 </script>
 
 <div class="relative min-h-dvh overflow-hidden bg-bg">
-	<div class="bg-grid pointer-events-none absolute inset-0 opacity-25"></div>
+	<div class="bg-grid pointer-events-none absolute inset-0 opacity-[0.14]"></div>
 	<div class="relative mx-auto max-w-6xl px-6">
 		<Nav />
 		<main class="py-10">

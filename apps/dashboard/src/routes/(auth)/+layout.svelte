@@ -8,9 +8,9 @@
 </script>
 
 <div class="relative grid min-h-dvh place-items-center overflow-hidden bg-bg px-6">
-	<div class="bg-grid pointer-events-none absolute inset-0 opacity-30"></div>
+	<div class="bg-grid pointer-events-none absolute inset-0 opacity-[0.15]"></div>
 	<div
-		class="pointer-events-none absolute -top-40 left-1/2 size-[520px] -translate-x-1/2 rounded-full opacity-20 blur-[120px]"
+		class="pointer-events-none absolute -top-44 left-1/2 size-[480px] -translate-x-1/2 rounded-full opacity-[0.09] blur-[130px]"
 		style="background: radial-gradient(circle, var(--accent), transparent 60%)"
 	></div>
 

@@ -22,9 +22,9 @@
 
 <div class="relative min-h-dvh overflow-hidden bg-bg">
 	<!-- ambient backdrop -->
-	<div class="bg-grid pointer-events-none absolute inset-0 opacity-40"></div>
+	<div class="bg-grid pointer-events-none absolute inset-0 opacity-[0.18]"></div>
 	<div
-		class="pointer-events-none absolute -top-40 left-1/2 size-[640px] -translate-x-1/2 rounded-full opacity-25 blur-[120px]"
+		class="pointer-events-none absolute -top-48 left-1/2 size-[560px] -translate-x-1/2 rounded-full opacity-[0.1] blur-[130px]"
 		style="background: radial-gradient(circle, var(--accent), transparent 60%)"
 	></div>
 
@@ -45,10 +45,7 @@
 						class="font-display text-balance text-5xl font-semibold leading-[1.05] tracking-tight md:text-6xl"
 						in:fly={rise(160)}
 					>
-						Web analytics<br />without the
-						<span class="bg-gradient-to-r from-accent to-cyan bg-clip-text text-transparent">
-							clutter</span
-						>.
+						Web analytics<br />without the <span class="text-accent">clutter</span>.
 					</h1>
 					<p class="max-w-md text-pretty text-lg text-muted" in:fly={rise(240)}>
 						Everything you actually look at in Google Analytics — visitors, pages, sources — on one
@@ -114,7 +111,7 @@
 				class="relative overflow-hidden rounded-2xl border border-border bg-surface px-8 py-14 text-center"
 			>
 				<div
-					class="pointer-events-none absolute inset-x-0 -top-24 mx-auto size-72 rounded-full opacity-20 blur-[100px]"
+					class="pointer-events-none absolute inset-x-0 -top-24 mx-auto size-72 rounded-full opacity-[0.1] blur-[110px]"
 					style="background: radial-gradient(circle, var(--accent), transparent 60%)"
 				></div>
 				<h2 class="font-display text-3xl font-semibold tracking-tight">

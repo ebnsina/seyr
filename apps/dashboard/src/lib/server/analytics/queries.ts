@@ -61,8 +61,11 @@ function hasActiveFilters(scope: QueryScope): boolean {
 async function getTimeseriesFromRollup(scope: QueryScope): Promise<TimeseriesPoint[]> {
 	const from = new Date(scope.range.from).toISOString().slice(0, 19).replace('T', ' ');
 	const to = new Date(scope.range.to).toISOString().slice(0, 19).replace('T', ' ');
-	const rows = await queryRows<{ bucket: string; visitors: string; pageviews: string }>(
-		`SELECT toString(date) AS bucket, sum(pageviews) AS pageviews, uniqMerge(visitors) AS visitors
+	// Select the `date` column itself (the ORDER BY / WITH FILL column) so gap-
+	// filled rows carry a real date; selecting an alias expression would leave
+	// filled rows blank (→ "Invalid Date" on the axis).
+	const rows = await queryRows<{ date: string; visitors: string; pageviews: string }>(
+		`SELECT date, sum(pageviews) AS pageviews, uniqMerge(visitors) AS visitors
 		 FROM ${DAILY_ROLLUP}
 		 WHERE site_id = {siteId:UInt64}
 		   AND date >= toDate(parseDateTimeBestEffort({from:String}))
@@ -73,8 +76,8 @@ async function getTimeseriesFromRollup(scope: QueryScope): Promise<TimeseriesPoi
 		{ siteId: scope.siteId.toString(), from, to }
 	);
 	return rows.map((r) => ({
-		// Normalize to the same shape the raw query returns for the chart.
-		bucket: `${r.bucket} 00:00:00`,
+		// Normalize to the same 'YYYY-MM-DD HH:MM:SS' shape the raw query returns.
+		bucket: `${r.date} 00:00:00`,
 		visitors: Number(r.visitors),
 		pageviews: Number(r.pageviews)
 	}));
