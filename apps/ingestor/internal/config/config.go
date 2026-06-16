@@ -21,6 +21,10 @@ type Config struct {
 	FlushInterval   time.Duration
 	SiteCacheTTL    time.Duration
 	ShutdownTimeout time.Duration
+	// "soft" (default): keep counting over-limit orgs (dashboard surfaces the
+	// upgrade banner). "block": drop events once an org exceeds its monthly limit.
+	OverLimitMode      string
+	UsageFlushInterval time.Duration
 }
 
 // IngestPath is the neutral beacon route. Kept deliberately generic so
@@ -58,6 +62,9 @@ func Load() (*Config, error) {
 		FlushInterval:   time.Duration(envInt("INGEST_FLUSH_INTERVAL_MS", 2000)) * time.Millisecond,
 		SiteCacheTTL:    time.Duration(envInt("INGEST_SITE_CACHE_TTL_MS", 60000)) * time.Millisecond,
 		ShutdownTimeout: 10 * time.Second,
+		OverLimitMode:   env("INGEST_OVER_LIMIT_MODE", "soft"),
+		UsageFlushInterval: time.Duration(envInt("INGEST_USAGE_FLUSH_INTERVAL_MS", 5000)) *
+			time.Millisecond,
 	}
 	if cfg.SaltSecret == "" {
 		return nil, fmt.Errorf("INGEST_SALT_SECRET must be set")

@@ -21,6 +21,7 @@ import (
 	"github.com/seyr/ingestor/internal/server"
 	"github.com/seyr/ingestor/internal/sites"
 	"github.com/seyr/ingestor/internal/store"
+	"github.com/seyr/ingestor/internal/usage"
 )
 
 func main() {
@@ -54,7 +55,16 @@ func run() error {
 	defer stopBuf() // safety net; the drain path below also calls it explicitly
 	go buf.Run(bufCtx)
 
-	srv := server.New(buf, sites.NewResolver(pool, cfg.SiteCacheTTL), event.NewSaltManager(cfg.SaltSecret))
+	tracker := usage.NewTracker(pool, cfg.UsageFlushInterval)
+	tracker.Start(bufCtx)
+
+	srv := server.New(
+		buf,
+		sites.NewResolver(pool, cfg.SiteCacheTTL),
+		event.NewSaltManager(cfg.SaltSecret),
+		tracker,
+		cfg.OverLimitMode == "block",
+	)
 	httpServer := &http.Server{
 		Addr:              fmt.Sprintf(":%d", cfg.Port),
 		Handler:           srv.Handler(),
@@ -86,6 +96,7 @@ func run() error {
 	_ = httpServer.Shutdown(shutdownCtx)
 
 	stopBuf()
+	tracker.Stop() // final usage flush
 	select {
 	case <-buf.Done():
 		log.Println("[ingestor] buffer drained, bye")

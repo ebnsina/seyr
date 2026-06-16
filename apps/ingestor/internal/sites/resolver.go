@@ -1,4 +1,4 @@
-// Package sites resolves reported domains to numeric site ids, with caching so
+// Package sites resolves reported domains to site/org/limit info, with caching so
 // the hot path doesn't hit Postgres on every beacon.
 package sites
 
@@ -13,12 +13,12 @@ import (
 )
 
 type entry struct {
-	siteID  uint64
+	info    store.SiteInfo
 	found   bool // negative cache: domain is known-unregistered
 	expires time.Time
 }
 
-// Resolver caches domain → site id lookups (including negatives) with a TTL.
+// Resolver caches domain → site info (including negatives) with a TTL.
 type Resolver struct {
 	pool *pgxpool.Pool
 	ttl  time.Duration
@@ -32,25 +32,25 @@ func NewResolver(pool *pgxpool.Pool, ttl time.Duration) *Resolver {
 	return &Resolver{pool: pool, ttl: ttl, cache: make(map[string]entry)}
 }
 
-// Resolve returns the site id for a domain, and false if it isn't registered.
-func (r *Resolver) Resolve(ctx context.Context, domain string) (uint64, bool, error) {
+// Resolve returns the site info for a domain, and false if it isn't registered.
+func (r *Resolver) Resolve(ctx context.Context, domain string) (store.SiteInfo, bool, error) {
 	now := time.Now()
 
 	r.mu.RLock()
 	if e, ok := r.cache[domain]; ok && e.expires.After(now) {
 		r.mu.RUnlock()
-		return e.siteID, e.found, nil
+		return e.info, e.found, nil
 	}
 	r.mu.RUnlock()
 
-	siteID, found, err := store.LookupSiteID(ctx, r.pool, domain)
+	info, found, err := store.LookupSite(ctx, r.pool, domain)
 	if err != nil {
-		return 0, false, err
+		return store.SiteInfo{}, false, err
 	}
 
 	r.mu.Lock()
-	r.cache[domain] = entry{siteID: siteID, found: found, expires: now.Add(r.ttl)}
+	r.cache[domain] = entry{info: info, found: found, expires: now.Add(r.ttl)}
 	r.mu.Unlock()
 
-	return siteID, found, nil
+	return info, found, nil
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/seyr/ingestor/internal/config"
 	"github.com/seyr/ingestor/internal/event"
 	"github.com/seyr/ingestor/internal/sites"
+	"github.com/seyr/ingestor/internal/usage"
 )
 
 // maxBodyBytes caps beacon payloads — they are tiny by design.
@@ -18,14 +19,23 @@ const maxBodyBytes = 64 * 1024
 
 // Server holds the dependencies the handlers need.
 type Server struct {
-	buffer *buffer.Buffer
-	sites  *sites.Resolver
-	salt   *event.SaltManager
+	buffer         *buffer.Buffer
+	sites          *sites.Resolver
+	salt           *event.SaltManager
+	usage          *usage.Tracker
+	blockOverLimit bool
 }
 
-// New builds a Server.
-func New(buf *buffer.Buffer, resolver *sites.Resolver, salt *event.SaltManager) *Server {
-	return &Server{buffer: buf, sites: resolver, salt: salt}
+// New builds a Server. blockOverLimit toggles hard enforcement (drop over-limit
+// events) vs the default soft mode (keep counting; dashboard shows the banner).
+func New(
+	buf *buffer.Buffer,
+	resolver *sites.Resolver,
+	salt *event.SaltManager,
+	tracker *usage.Tracker,
+	blockOverLimit bool,
+) *Server {
+	return &Server{buffer: buf, sites: resolver, salt: salt, usage: tracker, blockOverLimit: blockOverLimit}
 }
 
 // Handler returns the configured HTTP handler (routes + middleware).
@@ -84,17 +94,25 @@ func (s *Server) handleIngest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	siteID, found, err := s.sites.Resolve(r.Context(), b.D)
+	site, found, err := s.sites.Resolve(r.Context(), b.D)
 	if err != nil || !found {
 		return
+	}
+
+	// Track month-to-date usage and enforce the org's plan limit.
+	now := time.Now()
+	count := s.usage.Record(r.Context(), site.OrgID, now)
+	overLimit := site.MonthlyLimit > 0 && count > site.MonthlyLimit
+	if overLimit && s.blockOverLimit {
+		return // hard enforcement: drop without buffering
 	}
 
 	row := event.BuildRow(&b, event.RequestContext{
 		Header:    r.Header,
 		UserAgent: ua,
-		Salt:      s.salt.Current(time.Now()),
-		SiteID:    siteID,
-		Now:       time.Now(),
+		Salt:      s.salt.Current(now),
+		SiteID:    site.SiteID,
+		Now:       now,
 	})
 	s.buffer.Add(row)
 }
